@@ -126,6 +126,7 @@ dotnet test --filter FullyQualifiedName~Register_WithDuplicateUsername_ShouldRet
 ```
 
 ### Run test with code coverage
+* https://learn.microsoft.com/en-us/dotnet/core/testing/unit-testing-code-coverage
 ```
 dotnet test --collect:"XPlat Code Coverage"
 
