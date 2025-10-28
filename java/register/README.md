@@ -182,6 +182,12 @@ The API will be available at `http://localhost:8080`
 ./mvnw test -Dtest="*IntegrationTest"
 ```
 
+Run test with coverage
+```
+./mvnw clean package
+```
+Open report in file `target/site/jacoco/index.html`
+
 ## Testing
 
 ### Unit Tests
