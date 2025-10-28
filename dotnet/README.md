@@ -118,6 +118,20 @@ dotnet test --filter FullyQualifiedName~Register_WithValidRequest_ShouldReturnOk
 dotnet test --filter FullyQualifiedName~Register_WithDuplicateUsername_ShouldReturnBadRequest
 ```
 
+### Run test with code coverage
+```
+dotnet test --collect:"XPlat Code Coverage"
+
+# Generate report
+dotnet tool install -g dotnet-reportgenerator-globaltool
+
+reportgenerator -reports:"Path\To\TestProject\TestResults\{guid}\coverage.cobertura.xml" -targetdir:"coveragereport" -reporttypes:Html
+```
+
+Open report
+* coveragereport/index.html
+
+
 
 ## API Documentation
 
