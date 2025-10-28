@@ -45,7 +45,7 @@ pytest --cov=app --cov-report=html tests/
 4. Run test by specify folder
 ```bash
 pytest tests/unit/
-pytest tests/integration/
+pytest tests/component/
 ```
 
 5. Create database
