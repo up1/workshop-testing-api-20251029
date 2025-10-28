@@ -7,10 +7,9 @@ from app.database import Base, get_db
 
 
 # Create in-memory SQLite database for testing
-SQLALCHEMY_DATABASE_URL = "sqlite:///:memory:"
+SQLALCHEMY_DATABASE_URL = "sqlite:///memory.db"
 engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
-
 
 def override_get_db():
     """Override database dependency for testing"""
@@ -21,18 +20,24 @@ def override_get_db():
         db.close()
 
 
-@pytest.fixture
+@pytest.fixture(scope="module")
 def client():
     """Create test client with test database"""
-    Base.metadata.create_all(bind=engine)
+    # Create tables BEFORE setting up the app
+    Base.metadata.drop_all(bind=engine)  # Clean slate
+    Base.metadata.create_all(bind=engine)  # Create all tables
+    # Create users table specifically
+    if not engine.dialect.has_table(engine.connect(), table_name="users"):
+        Base.metadata.tables["users"].create(bind=engine)
+    
+    # Override the database dependency
     app.dependency_overrides[get_db] = override_get_db
     
     with TestClient(app) as test_client:
         yield test_client
     
-    Base.metadata.drop_all(bind=engine)
+    # Clean up after test
     app.dependency_overrides.clear()
-
 
 def test_register_success(client):
     """Test successful user registration"""
@@ -60,7 +65,7 @@ def test_register_success(client):
     assert "sentAt" in data["verification"]
 
 
-def test_register_validation_error_invalid_email(client):
+def test_register_validation_error_invalid_email(client: TestClient):
     """Test registration with invalid email"""
     response = client.post(
         "/api/v1/register",
@@ -82,7 +87,7 @@ def test_register_validation_error_invalid_email(client):
     assert "email" in data["error"]["fields"]
 
 
-def test_register_validation_error_weak_password(client):
+def test_register_validation_error_weak_password(client: TestClient):
     """Test registration with weak password"""
     response = client.post(
         "/api/v1/register",
@@ -104,7 +109,7 @@ def test_register_validation_error_weak_password(client):
     assert "password" in data["error"]["fields"]
 
 
-def test_register_duplicate_username(client):
+def test_register_duplicate_username(client: TestClient):
     """Test registration with duplicate username"""
     # First registration
     client.post(
@@ -138,10 +143,10 @@ def test_register_duplicate_username(client):
     
     assert response.status_code == 409
     data = response.json()
-    assert data["error"]["code"] == "USER_EXISTS"
+    assert data["detail"]["error"]["code"] == "USER_EXISTS"
 
 
-def test_register_password_mismatch(client):
+def test_register_password_mismatch(client: TestClient):
     """Test registration with password mismatch"""
     response = client.post(
         "/api/v1/register",
@@ -162,14 +167,14 @@ def test_register_password_mismatch(client):
     assert data["error"]["code"] == "VALIDATION_FAILED"
 
 
-def test_health_check(client):
+def test_health_check(client: TestClient):
     """Test health check endpoint"""
     response = client.get("/health")
     assert response.status_code == 200
     assert response.json()["status"] == "healthy"
 
 
-def test_root_endpoint(client):
+def test_root_endpoint(client: TestClient):
     """Test root endpoint"""
     response = client.get("/")
     assert response.status_code == 200
