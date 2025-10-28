@@ -44,6 +44,15 @@ pytest
 pytest --cov=app tests/
 ```
 
+5. Run test by specify folder
+```
+```bash
+pytest tests/unit/
+pytest tests/integration/
+```
+```
+
+
 ## API Documentation
 
 Once running, visit:

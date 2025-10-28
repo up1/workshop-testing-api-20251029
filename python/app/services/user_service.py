@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from app.models.user import User
@@ -86,5 +86,5 @@ class UserService:
         # In production, this would send an actual email
         return {
             "channel": "email",
-            "sentAt": datetime.utcnow()
+            "sentAt": datetime.now(timezone.utc)
         }
