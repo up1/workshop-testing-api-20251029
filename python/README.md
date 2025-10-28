@@ -51,7 +51,7 @@ pytest tests/component/
 5. Create database
 ```
 docker compose down
-docker compose up -d
+docker compose up -d db
 docker compose ps
 ```
 
