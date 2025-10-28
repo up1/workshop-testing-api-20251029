@@ -1,0 +1,128 @@
+# Register API Tests
+
+### 1. Register with valid request
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Somkiat Pui",
+  "username": "somkiat.p",
+  "email": "somkiat.p@example.com",
+  "phone": "+66812345678",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "Pa$$w0rd2025!",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
+
+### 2. Register with invalid email
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Test User",
+  "username": "test.user",
+  "email": "invalid-email",
+  "phone": "+66812345679",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "Pa$$w0rd2025!",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
+
+### 3. Register with weak password
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Test User",
+  "username": "test.user2",
+  "email": "test2@example.com",
+  "phone": "+66812345679",
+  "password": "weak",
+  "confirmPassword": "weak",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
+
+### 4. Register without Idempotency-Key
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+
+{
+  "fullName": "Test User",
+  "username": "test.user3",
+  "email": "test3@example.com",
+  "phone": "+66812345680",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "Pa$$w0rd2025!",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
+
+### 5. Register with duplicate username
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Another User",
+  "username": "somkiat.p",
+  "email": "another@example.com",
+  "phone": "+66812345681",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "Pa$$w0rd2025!",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
+
+### 6. Register with duplicate email
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Another User",
+  "username": "another.user",
+  "email": "somkiat.p@example.com",
+  "phone": "+66812345681",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "Pa$$w0rd2025!",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
+
+### 7. Register without accepting terms
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Test User",
+  "username": "test.user4",
+  "email": "test4@example.com",
+  "phone": "+66812345682",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "Pa$$w0rd2025!",
+  "dob": "1995-05-10",
+  "acceptTerms": false
+}
+
+### 8. Register with mismatched passwords
+POST http://localhost:5000/api/v1/register
+Content-Type: application/json
+Idempotency-Key: {{$guid}}
+
+{
+  "fullName": "Test User",
+  "username": "test.user5",
+  "email": "test5@example.com",
+  "phone": "+66812345683",
+  "password": "Pa$$w0rd2025!",
+  "confirmPassword": "DifferentPassword123!",
+  "dob": "1995-05-10",
+  "acceptTerms": true
+}
