@@ -42,7 +42,11 @@ uvicorn app.main:app --reload
 ```bash
 pytest
 pytest --cov=app tests/
+pytest --cov=app --cov-report=html tests/
 ```
+
+Open coverage report in file `htmlcov/index.html`
+
 
 5. Run test by specify folder
 ```
