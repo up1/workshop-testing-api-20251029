@@ -89,6 +89,13 @@ CREATE TABLE users (
 ### 4. Run the application
 
 ```bash
+
+// Start database
+docker compose down
+docker compose up -d db
+docker compose ps
+
+// Start server
 cd api
 dotnet run
 ```
