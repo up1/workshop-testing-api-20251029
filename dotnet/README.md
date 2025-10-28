@@ -37,7 +37,7 @@ tests/
 - PostgreSQL 18
 - BCrypt for password hashing
 - xUnit for testing
-- Moq for mocking
+- [Moq for mocking](https://github.com/devlooped/moq)
 - In-memory database for integration testing
 
 ## Prerequisites
