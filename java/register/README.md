@@ -158,6 +158,9 @@ spring.datasource.password=your_password
 
 2. Run the application:
 ```bash
+docker compose down
+docker compose up -d db_java
+
 ./mvnw spring-boot:run
 ```
 
