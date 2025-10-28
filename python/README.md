@@ -33,32 +33,34 @@ cp .env.example .env
 # Edit .env with your database credentials
 ```
 
-3. Run the application:
-```bash
-uvicorn app.main:app --reload
-```
-
-4. Run tests:
+3. Run tests:
 ```bash
 pytest
 pytest --cov=app tests/
 pytest --cov=app --cov-report=html tests/
 ```
+## Open coverage report in file `htmlcov/index.html`
 
-Open coverage report in file `htmlcov/index.html`
 
-
-5. Run test by specify folder
-```
+4. Run test by specify folder
 ```bash
 pytest tests/unit/
 pytest tests/integration/
 ```
+
+5. Create database
+```
+docker compose down
+docker compose up -d
+docker compose ps
 ```
 
+6. Run the application:
+```bash
+uvicorn app.main:app --reload
+```
 
 ## API Documentation
-
 Once running, visit:
 - Swagger UI: http://localhost:8000/docs
 - ReDoc: http://localhost:8000/redoc
