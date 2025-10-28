@@ -104,6 +104,21 @@ Swagger UI
 dotnet test
 ```
 
+### Run tests by folder
+
+```bash
+# Run all tests
+dotnet test
+
+dotnet test --filter FullyQualifiedName~Unit
+
+dotnet test --filter FullyQualifiedName~Integration
+
+dotnet test --filter FullyQualifiedName~Register_WithValidRequest_ShouldReturnOk
+dotnet test --filter FullyQualifiedName~Register_WithDuplicateUsername_ShouldReturnBadRequest
+```
+
+
 ## API Documentation
 
 ### Register Endpoint

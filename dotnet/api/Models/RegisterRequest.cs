@@ -34,6 +34,6 @@ public class RegisterRequest
     [Required(ErrorMessage = "Date of birth is required")]
     public string Dob { get; set; } = string.Empty;
 
-    [Required(ErrorMessage = "You must accept the terms")]
+    [Range(typeof(bool), "true", "true", ErrorMessage = "You must accept the terms")]
     public bool AcceptTerms { get; set; }
 }

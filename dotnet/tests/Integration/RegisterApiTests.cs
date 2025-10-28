@@ -9,13 +9,16 @@ using System.Net.Http.Json;
 
 namespace tests.Integration;
 
-public class RegisterApiTests : IClassFixture<WebApplicationFactory<Program>>
+public class RegisterApiTests : IClassFixture<WebApplicationFactory<Program>>, IDisposable
 {
     private readonly WebApplicationFactory<Program> _factory;
     private readonly HttpClient _client;
+    private readonly string _databaseName;
 
     public RegisterApiTests(WebApplicationFactory<Program> factory)
     {
+        _databaseName = "TestDb_" + Guid.NewGuid();
+        
         _factory = factory.WithWebHostBuilder(builder =>
         {
             builder.ConfigureServices(services =>
@@ -39,7 +42,7 @@ public class RegisterApiTests : IClassFixture<WebApplicationFactory<Program>>
                 // Add DbContext using in-memory database for testing
                 services.AddDbContext<AppDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("TestDb_" + Guid.NewGuid());
+                    options.UseInMemoryDatabase(_databaseName);
                 });
             });
 
@@ -47,6 +50,14 @@ public class RegisterApiTests : IClassFixture<WebApplicationFactory<Program>>
         });
 
         _client = _factory.CreateClient();
+    }
+
+    public void Dispose()
+    {
+        // Clean up the in-memory database
+        using var scope = _factory.Services.CreateScope();
+        var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+        context.Database.EnsureDeleted();
     }
 
     [Fact]
@@ -226,15 +237,15 @@ public class RegisterApiTests : IClassFixture<WebApplicationFactory<Program>>
             AcceptTerms = true
         };
 
-        var client1 = _factory.CreateClient();
-        var client2 = _factory.CreateClient();
-        
-        client1.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
-        client2.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
+        _client.DefaultRequestHeaders.Clear();
+        _client.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
 
         // Act
-        await client1.PostAsJsonAsync("/api/v1/register", firstRequest);
-        var response = await client2.PostAsJsonAsync("/api/v1/register", secondRequest);
+        await _client.PostAsJsonAsync("/api/v1/register", firstRequest);
+        
+        _client.DefaultRequestHeaders.Clear();
+        _client.DefaultRequestHeaders.Add("Idempotency-Key", Guid.NewGuid().ToString());
+        var response = await _client.PostAsJsonAsync("/api/v1/register", secondRequest);
 
         // Assert
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
