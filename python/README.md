@@ -60,6 +60,10 @@ docker compose ps
 uvicorn app.main:app --reload
 ```
 
+7. API testing
+* Postman and newman
+* robot framework with requests library
+
 ## API Documentation
 Once running, visit:
 - Swagger UI: http://localhost:8000/docs
